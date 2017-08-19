@@ -1,14 +1,14 @@
-# This is a simple program which adds two single-precision floating-point
-# floating-point numbers.
-
 		.data
 
 		.text
 		.globl main
 main:
-	li $a0, 1 # load x
-	li $a1, 8 # load y
-	li $a2, 3 # load n
+	# load x
+	li $a0, 4 
+	# load y
+	li $a1, 4096 
+	# load n
+	li $a2, 5 
 	
 	jal funct
 	
@@ -18,17 +18,20 @@ main:
 	ori $v0, $0, 10                                                                                                                                                              
     syscall
 	
-funct: 
+funct:
+#initialise the result register
+addi $v0, $0, 0
+
 # store the arguments into temporary register
 # store x
 add $t0, $a0, $0
 
-ori $t1, 0
+addi $t1, 0
 
-#initialise the result register
-ori $t7, $0, 0 # for 3x4
-ori $t8, $0, 0 # for 2^n
-ori $t9, $0, 0 # for range check
+#initialise the registers
+addi $t7, $0, 0 # for 3x4
+addi $t8, $0, 0 # for 2^n
+addi $t9, $0, 0 # for range check
 
 #store some integers to be used
 addi $t3, $0, 1
@@ -40,6 +43,9 @@ slti $t9, $a0, 10
 bne $t9, $t3, Exit 
 # check if x > 0
 blez $a0, Exit
+
+# check if y > 0
+blez $a1, Exit
 
 # check n range
 # check n < 7
@@ -64,10 +70,7 @@ mult $t0, $t0
 mflo $t0
 
 #shift y right by n to get y/2^n
-sra $t1, $a1, $a2
-
-#initialise the result register
-addi $v0, $0, 0
+srav $t1, $a1, $a2
 
 # z = 1
 addi $v0, $v0, 1
@@ -78,6 +81,3 @@ add $v0, $v0, $t1
 
 Exit:
 jr $ra
-
-
-
